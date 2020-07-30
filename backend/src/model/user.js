@@ -7,9 +7,7 @@ const bcrypt = require('bcrypt')
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
-        unique: true,
         required: true,
-        trim: true
     },
     email: {
         type: String,
@@ -44,6 +42,8 @@ const userSchema = new mongoose.Schema({
 },{
     timestamps:true
 })
+
+
 
 
 userSchema.methods.toJSON =  function(){

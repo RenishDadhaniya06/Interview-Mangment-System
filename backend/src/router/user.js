@@ -6,15 +6,29 @@ const router = express.Router()
 
 
 router.post('/users', async (req, res) => {
-    const user = new User(req.body)
-
-    try {
-        await user.save()
-        const token = await user.generateAuthToken()
-        res.status(201).send({ user, token })
-    } catch (e) {
-        res.status(400).send(e.message)
-    }
+    User.find({ email: req.body.email })
+    .exec()
+    .then(async(user)=>{
+        if(user.length >=1){
+           res.status(400).send({
+                Message: "Already A User Please SignIn"
+            });
+        }
+        else{
+            const user = new User(req.body)
+            await user.save()
+            const token = await user.generateAuthToken()
+            res.status(201).send({ user, token })
+        }
+    })
+    // const user = new User(req.body)
+    // try {
+    //     await user.save()
+    //     const token = await user.generateAuthToken()
+    //     res.status(201).send({ user, token })
+    // } catch (e) {
+    //     res.status(400).send(e)
+    // }
 })
 
 router.post('/users/login', async (req, res) => {
@@ -22,8 +36,8 @@ router.post('/users/login', async (req, res) => {
         const user = await User.findByCredentials(req.body.email, req.body.password)
         const token = await user.generateAuthToken()
         res.send({ user, token })
-    } catch (e) {
-        res.status(400).send('Unable To Login:'+e)
+    } catch (error) {
+        res.status(400).send({Message:error.message})
     }
 })
 
