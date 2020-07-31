@@ -10,11 +10,6 @@ import { BrowserRouter, Route, Switch ,Redirect} from "react-router-dom";
 
 
 function App() {
-  // const Auth = localStorage.getItem('Auth')
-  // let x = null
-  // if( Auth != null){
-  //   x = <Route path="/home" exact  component={Home} />
-  // }
   return (
     <div
       className="App"
