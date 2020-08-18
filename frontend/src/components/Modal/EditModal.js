@@ -1,6 +1,7 @@
 import React from "react";
 import axios from 'axios'
 import classes from "./Modal.module.css";
+import {connect} from 'react-redux'
 
 const EditModal = (props) => {
 
@@ -15,9 +16,12 @@ const EditModal = (props) => {
             "Auth1"
           );
           axios.patch('http://localhost:3000/users/me',data)
-          .then((data)=>{
-           console.log(data)
-            document.getElementById('done').click()
+          .then((response)=>{
+           console.log(response)
+           document.getElementById('done').click()
+          })
+          .then(()=>{
+              props.onEdit(data.name,data.email)
           })
           .catch((e)=>{
               console.log(e)
@@ -65,4 +69,10 @@ const EditModal = (props) => {
   }
 };
 
-export default EditModal;
+const mapActionsToProps = (dispatch) =>{
+    return{
+      onEdit:(name,email) =>dispatch({ type:"Signup",name:name,email:email})
+    }
+}
+
+export default connect(null,mapActionsToProps)(EditModal);

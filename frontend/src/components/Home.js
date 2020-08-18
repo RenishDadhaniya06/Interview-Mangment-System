@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import axios from "axios";
 import Modal from "./Modal/DeleteModal.js";
 import EditModal from "./Modal/EditModal.js";
-
+import {connect} from 'react-redux'
 
 class Home extends Component {
   state = {
@@ -44,7 +44,7 @@ class Home extends Component {
       });
   };
 
-  listUserHandler = async () => {
+  listUserHandler = async (e) => {
     axios.defaults.headers.common["Authorization"] = await localStorage.getItem(
       "Auth1"
     );
@@ -76,10 +76,22 @@ class Home extends Component {
     let x = this.state.showModal;
     this.setState({ showModal: !x });
   };
-  showEditModalHandler = () => {
+
+  showEditModalHandler = async () => {
     let x = this.state.showEditModal;
     this.setState({ showEditModal: !x });
-    this.listUserHandler()
+    axios.defaults.headers.common["Authorization"] = await localStorage.getItem(
+      "Auth1"
+    );
+    axios
+      .get("http://localhost:3000/users/me")
+      .then((response) => {
+        this.setState({ users: response.data });
+        console.log(response);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   };
 
   render() {
@@ -91,7 +103,7 @@ class Home extends Component {
     return (
       <div style={{ fontSize: "larger" }}>
         {x}
-        <p>Hello {this.state.users.name}</p>
+        <p>Hello {this.props.name?this.props.name:this.state.users.name}</p>
         <button
           className="btn btn-success"
           onClick={(e) => this.logoutHandler(e)}
@@ -105,8 +117,7 @@ class Home extends Component {
         >
           LogOut From All Devices
         </button>
-        <br />
-        <br />
+        &ensp;
         <button
           className="btn btn-primary"
           onClick={(e) => this.listUserHandler(e)}
@@ -164,9 +175,22 @@ class Home extends Component {
             <br />
           </EditModal>
         </div>
+        {this.props.ll}
       </div>
     );
   }
 }
 
-export default Home;
+const mapStateToProps = (state) =>{
+  return{
+    name : state.name,
+    email: state.email
+  }
+}
+const mapActionToProps = (dispatch) =>{
+  return{
+    load :()=> dispatch({type:"Loading"})
+  }
+}
+
+export default connect(mapStateToProps,mapActionToProps)(Home);

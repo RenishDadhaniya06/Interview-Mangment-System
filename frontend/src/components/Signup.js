@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import classes from "./SignUp.module.css";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
+import { connect } from "react-redux";
 
 class SignUp extends Component {
   registerHandler = async (e) => {
@@ -15,16 +16,19 @@ class SignUp extends Component {
     await axios
       .post("http://localhost:3000/users", data)
       .then((response) => {
+        console.log("Signup", response.data.user.name);
         localStorage.setItem("Auth1", response.data.token);
         axios.defaults.headers.common["Authorization"] = response.data.token;
         this.props.history.push("/home");
+      })
+      .then(()=>{
+        this.props.onSignup(data.name,data.email)
       })
       .catch((e) => {
         console.log("Error:", e.response);
         document.getElementById("signup").innerHTML = e.response.data.Message;
       });
   };
-
   render() {
     localStorage.clear();
     return (
@@ -69,4 +73,18 @@ class SignUp extends Component {
   }
 }
 
-export default SignUp;
+const mapStateToProps = (state) => {
+  return {
+    name: state.name,
+    email: state.email,
+  };
+};
+
+const mapActionsToProps = (dispatch) => {
+  return {
+    onSignup: (name, email) =>
+      dispatch({ type: "Signup", name: name, email: email }),
+  };
+};
+
+export default connect(mapStateToProps, mapActionsToProps)(SignUp);
