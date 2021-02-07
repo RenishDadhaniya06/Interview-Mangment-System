@@ -1,0 +1,9 @@
+.SignUp{
+    text-align: center;
+    font-size: larger;
+    border: 2px solid black;
+    width: 70%;
+    align-items: center;
+    padding: 20px;
+    justify-content: center;
+}
